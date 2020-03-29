@@ -1,0 +1,32 @@
+- hosts: localhost
+  gather_facts: no
+  vars:
+    - cname: "{{ip}}"
+      private: no
+  tasks:
+    - add_host:
+        name: "{{cname}}"
+        groups: dynamically_created_hosts
+    
+- hosts: dynamically_created_hosts
+  gather_facts: yes
+  name: NameNode Creation
+  tasks:
+    - copy: 
+        src: /root/Downloads/hadoop-1.2.1-1.x86_64.rpm
+        dest: /tmp/hadoop-1.2.1-1.x86_64.rpm
+    - command: "rpm -i /tmp/hadoop-1.2.1-1.x86_64.rpm --force"
+    - copy:
+        src: /tmp/hdfs-site_NN.xml
+        dest: /etc/hadoop/hdfs-site.xml
+    - copy:
+        src: /tmp/core-site.xml
+        dest: /etc/hadoop/core-site.xml
+    - file:
+        path: /name
+        state: absent
+    - file:
+        path: /name
+        state: directory
+    - shell: echo Y | hadoop namenode -format
+    - command: "hadoop-daemon.sh start namenode"

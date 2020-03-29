@@ -1,0 +1,39 @@
+- hosts: localhost
+  gather_facts: no
+  vars:
+    - myname: "{{t_ip}}"
+      private: no
+  tasks:
+    - add_host:
+        name: "{{t_ip}}"
+        groups: dynamically_created_hosts
+    
+- hosts: dynamically_created_hosts
+  gather_facts: yes
+  vars:
+    cname: "{{path}}"
+  tasks:
+   - package:
+      name: 'docker-ce'
+      state: present
+   - package:
+      name: 'python2-pip'
+      state: present
+   - pip:
+      name: 'docker-py'
+      executable: 'pip2'
+      state: present
+   - service:
+      name: 'docker'
+      state: 'started'
+      enabled: yes
+   - copy: 
+      src: "/root/Downloads/{{path}}"
+      dest: /tmp
+   - docker_image:
+      name: "{{path}}"
+      load_path: /tmp/{{path}}
+      state: present
+   - file:
+      path: /tmp/centos-latest.tar
+      state: absent

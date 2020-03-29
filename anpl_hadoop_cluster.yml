@@ -1,0 +1,91 @@
+- hosts: namenode
+  gather_facts: yes
+  name: NameNode Creation
+  tasks:
+    - copy: 
+        src: /root/Downloads/hadoop-1.2.1-1.x86_64.rpm
+        dest: /tmp/hadoop-1.2.1-1.x86_64.rpm
+    - command: "rpm -i /tmp/hadoop-1.2.1-1.x86_64.rpm --force"
+    - copy:
+        src: /tmp/hnn.xml
+        dest: /etc/hadoop/hdfs-site.xml
+    - copy:
+        src: /tmp/core.xml
+        dest: /etc/hadoop/core-site.xml
+    - file:
+        path: /name
+        state: absent
+    - file:
+        path: /name
+        state: directory
+    - shell: echo Y | hadoop namenode -format
+    - command: "hadoop-daemon.sh start namenode"
+
+- hosts: datanode
+  gather_facts: yes
+  name: DataNode Creation
+  tasks:
+    - copy: 
+        src: /root/Downloads/hadoop-1.2.1-1.x86_64.rpm
+        dest: /tmp/hadoop-1.2.1-1.x86_64.rpm
+    - command: rpm -i /tmp/hadoop-1.2.1-1.x86_64.rpm --force
+    - file:
+        path: /sdata
+        state: absent
+    - file:
+        path: /sdata
+        state: directory
+    - copy:
+        src: /tmp/hdd.xml
+        dest: /etc/hadoop/hdfs-site.xml
+    - copy:
+        src: /tmp/core.xml
+        dest: /etc/hadoop/core-site.xml
+    - firewalld: 
+        state: disabled
+        immediate: yes
+    - command: hadoop-daemon.sh start datanode
+
+- hosts: jobtracker
+  gather_facts: yes
+  name: Jobtracker Creation
+  tasks:
+    - copy: 
+        src: /root/Downloads/hadoop-1.2.1-1.x86_64.rpm
+        dest: /tmp/hadoop-1.2.1-1.x86_64.rpm
+    - command: "rpm -i /tmp/hadoop-1.2.1-1.x86_64.rpm --force"
+    - copy:
+        src: /tmp/map.xml
+        dest: /etc/hadoop/mapred-site.xml
+    - copy:
+        src: /tmp/core.xml
+        dest: /etc/hadoop/core-site.xml
+    - command: hadoop-daemon.sh start jobtracker
+
+- hosts: tasktracker
+  gather_facts: yes
+  name: TaskTracker Creation
+  tasks:
+    - copy: 
+        src: /root/Downloads/hadoop-1.2.1-1.x86_64.rpm
+        dest: /tmp/hadoop-1.2.1-1.x86_64.rpm
+    - command: "rpm -i /tmp/hadoop-1.2.1-1.x86_64.rpm --force"
+    - copy:
+        src: /tmp/map.xml
+        dest: /etc/hadoop/mapred-site.xml
+    - command: hadoop-daemon.sh start tasktracker
+
+- hosts: client
+  gather_facts: yes
+  name: Client Creation
+  tasks:
+    - copy: 
+        src: /root/Downloads/hadoop-1.2.1-1.x86_64.rpm
+        dest: /tmp/hadoop-1.2.1-1.x86_64.rpm
+    - command: "rpm -i /tmp/hadoop-1.2.1-1.x86_64.rpm --force"
+    - copy:
+        src: /tmp/map.xml
+        dest: /etc/hadoop/mapred-site.xml
+    - copy:
+        src: /tmp/core.xml
+        dest: /etc/hadoop/core-site.xml

@@ -1,0 +1,24 @@
+- hosts: localhost
+  gather_facts: no
+  vars:
+    - cname: "{{ip}}"
+      private: no
+  tasks:
+    - add_host:
+        name: "{{cname}}"
+        groups: dynamically_created_hosts
+    
+- hosts: dynamically_created_hosts
+  gather_facts: yes
+  name: Client Creation
+  tasks:
+    - copy: 
+        src: /root/Downloads/hadoop-1.2.1-1.x86_64.rpm
+        dest: /tmp/hadoop-1.2.1-1.x86_64.rpm
+    - command: "rpm -i /tmp/hadoop-1.2.1-1.x86_64.rpm --force"
+    - copy:
+        src: /tmp/mapred-site.xml
+        dest: /etc/hadoop/mapred-site.xml
+    - copy:
+        src: /tmp/core-site.xml
+        dest: /etc/hadoop/core-site.xml
