@@ -7,11 +7,19 @@ The entire configuration requirement was met by creating Ansible playbooks.
 
 The Socket Menu Scripts as of now has hardcoded IP's whcih need to be changes manually before Execution
 
-Dependencies:
+## Dependencies:
+
 RHEL OS (Recommended is RHEL-7.5 or RHEL-8)
+
 OpenCv
+
 Pyttsx3
+
 Numpy
+
 Ansible
+
 Hadoop(Ready to Install RPM)
+
 Docker(Ready to Install RPM)
+
